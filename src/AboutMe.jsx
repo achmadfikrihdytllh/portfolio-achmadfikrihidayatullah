@@ -145,6 +145,20 @@ export default function AboutMe() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,700;1,700&family=Montserrat:wght@300&display=swap');
 
+        /* FIX: 100vh di HP asli dihitung termasuk area address bar yang
+           collapse/muncul, jadi konten kepotong & area di bawah nggak
+           bisa di-tap. 100dvh nyesuain ke tinggi layar yang keliatan
+           beneran. overflow-y:auto sebagai fallback biar tetap bisa
+           di-scroll kalau ada browser lama yang belum support dvh. */
+        #menu-screen {
+          width: 100vw;
+          height: 100vh;
+          height: 100dvh;
+          position: relative;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+
         .sc-root {
           position: absolute;
           inset: 0;

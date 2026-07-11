@@ -71,6 +71,19 @@ export default function P3Menu({ onNavigate }) {
     setAnimKey(k => k + 1);
   };
 
+  // FIX: sebelumnya kode manggil selectItem(item.page) di onClick/onTouchStart
+  // padahal fungsi itu tidak pernah didefinisikan di mana pun di komponen ini.
+  // Akibatnya setiap tap/klik langsung throw ReferenceError dan event berhenti
+  // di situ, jadi menu terlihat "tidak bisa ditekan" (khususnya kerasa di HP
+  // karena user tidak buka console buat lihat errornya).
+  // Sekarang dipusatkan lewat satu fungsi yang manggil onNavigate (prop yang
+  // sama dipakai keyboard handler Enter), plus play sound & set active state.
+  const goTo = (idx) => {
+    playSound(detailMenuSound);
+    activate(idx);
+    onNavigate?.(ITEMS[idx].page);
+  };
+
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 1000);
     return () => clearTimeout(t);
@@ -80,7 +93,7 @@ export default function P3Menu({ onNavigate }) {
     const onKey = (e) => {
       if (e.key === "ArrowUp")   { playSound(selectItemSound); activate(Math.max(0, active - 1)); }
       if (e.key === "ArrowDown") { playSound(selectItemSound); activate(Math.min(ITEMS.length - 1, active + 1)); }
-      if (e.key === "Enter")     { playSound(detailMenuSound); onNavigate?.(ITEMS[active].page); }
+      if (e.key === "Enter")     { goTo(active); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -362,8 +375,8 @@ export default function P3Menu({ onNavigate }) {
                   marginTop: scaledOffsetY,
                   transitionDelay: mounted ? `${i * 80}ms` : "0ms",
                 }}
-                onClick={(e) => { e.preventDefault(); selectItem(item.page); }}
-                onTouchStart={(e) => { e.preventDefault(); selectItem(item.page); }}
+                onClick={(e) => { e.preventDefault(); goTo(i); }}
+                onTouchStart={(e) => { e.preventDefault(); goTo(i); }}
                 onMouseEnter={() => activate(i)}
                 aria-current={isActive ? "page" : undefined}
               >
