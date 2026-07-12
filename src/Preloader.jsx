@@ -1,4 +1,16 @@
 import { useEffect, useState } from "react";
+
+/**
+ * Preload otomatis semua gambar & suara di folder ./assets sebelum
+ * halaman apapun dirender. Pakai import.meta.glob (fitur Vite) supaya
+ * TIDAK perlu ketik manual tiap nama file — kalau nambah aset baru di
+ * folder assets, otomatis ikut di-preload tanpa perlu edit file ini.
+ *
+ * Video (.mp4) SENGAJA tidak diikutkan di sini karena ukurannya besar
+ * dan bakal bikin loading awal lama banget kalau ditunggu full-download.
+ * Video tetap jalan seperti biasa (browser stream sambil main), cuma
+ * tidak menahan splash screen.
+ */
 const imageModules = import.meta.glob(
   "./assets/**/*.{png,jpg,jpeg,webp,svg,gif}",
   { import: "default" }
@@ -7,12 +19,21 @@ const audioModules = import.meta.glob(
   "./assets/**/*.{wav,mp3,ogg}",
   { import: "default" }
 );
+// Video ikut di-preload juga (sebelumnya sengaja di-skip biar splash cepat,
+// tapi efeknya background layar item pas video belum sempat kebuffer).
+// Dipakai event "loadeddata" (bukan "canplaythrough") supaya cukup nunggu
+// frame pertama siap tampil, bukan nunggu seluruh video full ke-download —
+// kalau nunggu full, splash bisa lama banget buat video yang gede.
+const videoModules = import.meta.glob(
+  "./assets/**/*.{mp4,webm}",
+  { import: "default" }
+);
 
 function preloadImage(url) {
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = resolve;
-    img.onerror = resolve;
+    img.onerror = resolve; // tetap lanjut walau 1 file gagal, jangan nge-block semuanya
     img.src = url;
   });
 }
@@ -24,6 +45,23 @@ function preloadAudio(url) {
     audio.onerror = resolve;
     audio.src = url;
     audio.load();
+  });
+}
+
+function preloadVideo(url) {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+    video.preload = "auto";
+    video.muted = true;
+    video.playsInline = true;
+    video.oncanplaythrough = resolve;
+    video.onloadeddata = resolve;
+    video.onerror = resolve;
+    video.src = url;
+    video.load();
+    // Jaring pengaman per-video: kalau koneksi lambat banget, jangan
+    // sampai 1 video nahan splash lebih dari 10 detik sendirian.
+    setTimeout(resolve, 10000);
   });
 }
 
