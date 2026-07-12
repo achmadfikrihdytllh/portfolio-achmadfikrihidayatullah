@@ -8,6 +8,7 @@ import PageTransition from './PageTransition'
 import Socials from './Socials'
 import AboutMe from './AboutMe'
 import SideProjects from './SideProjects'
+import Preloader from './Preloader'
 import './App.css'
 
 function MenuScreen() {
@@ -54,5 +55,9 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
-  return <AnimatedRoutes />
+  return (
+    <Preloader>
+      <AnimatedRoutes />
+    </Preloader>
+  )
 }
