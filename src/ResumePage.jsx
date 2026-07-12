@@ -566,12 +566,22 @@ export default function ResumePage({ src }) {
 
         /* PANEL */
 
+        /* FIX: sebelumnya panel detail cuma ngikut alur normal, dan kalau
+           kontennya (top + list + bullets) lebih tinggi dari layar HP,
+           bagian bawahnya kepotong / susah dijangkau meski halaman utama
+           bisa discroll. Sekarang panel ini dikasih "jendela" scroll
+           sendiri (max-height + overflow-y:auto), independen dari scroll
+           halaman utama, jadi seluruh detail tetap bisa dijangkau. */
         .resume-detail-panel{
             position:relative;
             top:auto;
             right:auto;
             width:100%;
             min-height:auto;
+            max-height:58vh;
+            overflow-y:auto;
+            overflow-x:hidden;
+            -webkit-overflow-scrolling:touch;
             padding:14px;
             margin-top:6px;
             box-shadow:none;
