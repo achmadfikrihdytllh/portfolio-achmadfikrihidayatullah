@@ -115,6 +115,20 @@ export default function P3Menu({ onNavigate }) {
   return (
     <>
       <style>{`
+        /* FIX: container utama (#menu-screen ada di komponen parent, tapi
+           style tag React ini tidak di-scope jadi bisa nimpa dari sini).
+           100vh di HP asli dihitung TERMASUK area address bar yang bisa
+           collapse/muncul, jadi konten sering kepotong padahal sebenarnya
+           lebih tinggi dari yang keliatan. 100dvh ngikutin tinggi layar
+           yang BENERAN keliatan. overflow-y:auto sebagai jaring pengaman
+           supaya tetap bisa discroll kalau di HP tertentu masih kurang. */
+        #menu-screen {
+          height: 100vh;
+          height: 100dvh;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+
         .p3-overlay {
           position: absolute;
           inset: 0;
@@ -125,7 +139,7 @@ export default function P3Menu({ onNavigate }) {
           padding-left: clamp(20px, 6vw, 64px);
           padding-bottom: 5px;
           pointer-events: none;
-          overflow: hidden;
+          overflow: visible;
         }
 
         .p3-stripe  { position:absolute; right:0; top:0; bottom:0; width:5px; background:#c4001a; z-index:10; pointer-events:none; }
@@ -311,11 +325,17 @@ export default function P3Menu({ onNavigate }) {
             justify-content: flex-start;
             padding-left: 12px;
             padding-bottom: 12px;
+            /* FIX: sebelumnya overflow:hidden bikin item menu yang
+               kepotong di layar pendek jadi tidak bisa dijangkau sama
+               sekali. Sekarang bisa discroll & disentuh kalau perlu. */
+            overflow-y: auto;
+            pointer-events: auto;
+            -webkit-overflow-scrolling: touch;
           }
 
           .p3-menu {
             align-items: flex-start;
-            padding: 12px 16px 12px 12px;
+            padding: 12px 16px 24px 12px;
           }
 
           .p3-row {
