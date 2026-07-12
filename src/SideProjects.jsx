@@ -143,6 +143,19 @@ export default function SideProjects() {
     });
   };
 
+  // FIX: sebelumnya dipanggil di JSX (selectProject, closePreview) tapi
+  // tidak pernah didefinisikan di mana pun di komponen ini -> ReferenceError
+  // setiap kali di-klik/tap, jadi card project & tombol close tidak
+  // pernah kelihatan berfungsi.
+  const selectProject = (index) => {
+    playSound(selectItemSound);
+    setActiveIndex(index);
+  };
+
+  const closePreview = () => {
+    playSound(backSound);
+    setPreviewImage(null);
+  };
 
   return (
     <div className={`sideproj-screen${mounted ? " mounted" : ""}`}>
@@ -152,8 +165,15 @@ export default function SideProjects() {
         .sideproj-screen {
           position: relative;
           width: 100vw;
+          /* FIX: 100vh di HP asli dihitung termasuk area address bar yang
+             collapse/muncul, jadi konten & bagian bawah (list project,
+             footer) sering kepotong. 100dvh ngikutin tinggi layar yang
+             BENERAN keliatan. overflow-y:auto sebagai jaring pengaman
+             supaya tetap bisa discroll kalau di HP tertentu masih kurang. */
           height: 100vh;
-          overflow: hidden;
+          height: 100dvh;
+          overflow-y: auto;
+          overflow-x: hidden;
           background:
             radial-gradient(circle at top left, rgba(255, 255, 255, 0.18), transparent 24%),
             linear-gradient(135deg, #0b0f1c 0%, #12192d 52%, #1d2746 100%);
@@ -457,9 +477,11 @@ export default function SideProjects() {
           }
 
           .sideproj-layout {
-            inset: 78px 12px 12px 12px;
+            position: relative;
+            inset: auto;
+            padding: 78px 12px 60px 12px;
             gap: 12px;
-            overflow-y: auto;
+            overflow-y: visible;
           }
 
           .sideproj-list {
@@ -521,9 +543,11 @@ export default function SideProjects() {
           }
 
           .sideproj-footer {
-            position: fixed;
-            right: 12px;
-            bottom: 10px;
+            position: relative;
+            right: auto;
+            bottom: auto;
+            margin-top: 12px;
+            padding: 0 4px 10px;
             font-size: 11px;
             letter-spacing: 1.5px;
             opacity: 0.8;
@@ -566,7 +590,6 @@ export default function SideProjects() {
               key={project.title}
               className={`sideproj-card${index === activeIndex ? " active" : ""}`}
               onClick={() => selectProject(index)}
-              onTouchStart={() => selectProject(index)}
             >
               <div className="sideproj-card-top">
                 <div className="sideproj-card-title">{project.title}</div>

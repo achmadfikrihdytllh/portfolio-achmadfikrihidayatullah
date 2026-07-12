@@ -112,6 +112,22 @@ export default function ResumePage({ src }) {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&display=swap');
 
+        /* FIX: #menu-screen tidak punya sizing sama sekali di file ini,
+           padahal <style> React cuma aktif selagi komponen ini mounted,
+           jadi fix 100dvh di halaman lain (AboutMe) tidak otomatis kepake
+           di sini. 100dvh dipakai supaya tidak kepotong sama address bar
+           HP asli, overflow-y:auto biar tetap bisa discroll kalau konten
+           lebih tinggi dari layar (terutama pas .resume-overlay mobile
+           yang isinya card + panel detail ditumpuk vertikal). */
+        #menu-screen {
+          width: 100vw;
+          height: 100vh;
+          height: 100dvh;
+          position: relative;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+
         .resume-entry-mask {
           position: absolute;
           inset: 0;
@@ -467,6 +483,7 @@ export default function ResumePage({ src }) {
             overflow-x:hidden;
             padding:12px;
             gap:16px;
+            pointer-events: auto;
         }
 
         .resume-stack{

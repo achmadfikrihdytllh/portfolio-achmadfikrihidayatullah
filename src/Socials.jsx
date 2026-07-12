@@ -91,6 +91,20 @@ export default function Socials() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:ital,wght@0,400;0,700;1,700&display=swap');
 
+        /* FIX: #menu-screen tidak punya sizing di file ini, padahal
+           <style> React cuma aktif selagi komponen ini mounted, jadi fix
+           di halaman lain tidak otomatis kepake di sini. 100dvh dipakai
+           supaya tidak kepotong sama address bar HP asli, overflow-y:auto
+           biar tetap bisa discroll kalau kontennya lebih tinggi dari layar. */
+        #menu-screen {
+          width: 100vw;
+          height: 100vh;
+          height: 100dvh;
+          position: relative;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+
         .sc-root {
           position: absolute;
           inset: 0;

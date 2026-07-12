@@ -753,16 +753,12 @@ export default function AboutMe() {
           <div
             key={item.id}
             className={`sc-bar-outer${active === i ? " active" : ""}${mounted ? " mounted" : ""}`}
-            onClick={() => handleBarActivate(i)}
-            onMouseEnter={() => {
-              setActive(i);
-            }}
+            onMouseEnter={() => setActive(i)}
           >
             <div className="sc-bar-red" />
             <div
               className="sc-bar"
               onClick={() => handleBarActivate(i)}
-              onTouchStart={() => handleBarActivate(i)}
             >
               <img className="sc-char" src={CHARS[i]} alt="" />
               <div className="sc-bar-fill" />
