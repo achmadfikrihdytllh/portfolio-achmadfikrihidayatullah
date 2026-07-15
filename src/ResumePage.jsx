@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import selectItemSound from "./assets/select_item.wav";
 import backSound from "./assets/back_sound.wav";
+import profilePic from "./assets/profile.png";
 
 function playSound(src) {
   const audio = new Audio(src);
@@ -170,6 +171,105 @@ export default function ResumePage({ src }) {
           pointer-events: none;
           transform: scale(0.9);
           transform-origin: top left;
+        }
+
+        /* ── ID CARD ── */
+        .resume-id-card {
+          position: relative;
+          display: flex;
+          align-items: stretch;
+          height: 128px;
+          margin: 0 0 14px 12px;
+          background: #10185f;
+          clip-path: polygon(0 0, 97% 0, 100% 100%, 3% 100%);
+          box-shadow: 0 8px 0 rgba(5, 13, 59, 0.85), 10px 8px 0 #d63232;
+          opacity: 0;
+          transform: translateX(-48px);
+          transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .resume-id-card.mounted {
+          opacity: 1;
+          transform: translateX(0);
+        }
+
+        .resume-id-photo {
+          position: relative;
+          flex-shrink: 0;
+          width: 108px;
+          height: 100%;
+          margin: 10px 0 10px 14px;
+          overflow: hidden;
+          border: 3px solid #9cf7ff;
+          clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+          background: #05070f;
+        }
+        .resume-id-photo img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .resume-id-body {
+          position: relative;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 4px;
+          padding: 12px 20px 12px 22px;
+          min-width: 0;
+        }
+
+        .resume-id-kicker {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 15px;
+          letter-spacing: 3px;
+          color: #9ffbff;
+        }
+
+        .resume-id-name {
+          font-family: 'Anton', sans-serif;
+          font-size: 30px;
+          line-height: 0.98;
+          letter-spacing: 0.5px;
+          color: #f6fbff;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .resume-id-role {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 17px;
+          letter-spacing: 1.5px;
+          color: #a5f6ff;
+        }
+
+        .resume-id-tags {
+          display: flex;
+          gap: 8px;
+          margin-top: 4px;
+        }
+
+        .resume-id-tag {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 12px;
+          letter-spacing: 1.2px;
+          color: #06133b;
+          background: #8df6ff;
+          padding: 3px 9px 2px;
+          clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+        }
+
+        .resume-id-num {
+          position: absolute;
+          top: 10px;
+          right: 18px;
+          font-family: 'Anton', sans-serif;
+          font-size: 13px;
+          letter-spacing: 1px;
+          color: rgba(159, 251, 255, 0.55);
         }
 
         .resume-list-tag {
@@ -496,6 +596,51 @@ export default function ResumePage({ src }) {
             pointer-events:auto;
         }
 
+        /* ID CARD mobile */
+        .resume-id-card{
+            height: 92px;
+            margin: 0 0 10px 4px;
+        }
+
+        .resume-id-photo{
+            width: 74px;
+            margin: 8px 0 8px 10px;
+        }
+
+        .resume-id-body{
+            padding: 8px 14px 8px 14px;
+            gap: 2px;
+        }
+
+        .resume-id-kicker{
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .resume-id-name{
+            font-size: 19px;
+        }
+
+        .resume-id-role{
+            font-size: 12px;
+        }
+
+        .resume-id-tags{
+            margin-top: 3px;
+            gap: 5px;
+        }
+
+        .resume-id-tag{
+            font-size: 9px;
+            padding: 2px 6px 2px;
+        }
+
+        .resume-id-num{
+            top: 6px;
+            right: 10px;
+            font-size: 10px;
+        }
+
         .resume-list-tag{
             font-size:54px;
             margin-left:4px;
@@ -565,26 +710,25 @@ export default function ResumePage({ src }) {
         }
 
         /* PANEL */
-
-        /* FIX: sebelumnya panel detail cuma ngikut alur normal, dan kalau
-           kontennya (top + list + bullets) lebih tinggi dari layar HP,
-           bagian bawahnya kepotong / susah dijangkau meski halaman utama
-           bisa discroll. Sekarang panel ini dikasih "jendela" scroll
-           sendiri (max-height + overflow-y:auto), independen dari scroll
-           halaman utama, jadi seluruh detail tetap bisa dijangkau. */
+        /* FIX: detail panel dulu ikut ngalir bareng scroll halaman
+           (.resume-overlay), tapi kalau isinya panjang (list rows +
+           bullets) bagian bawahnya suka kepotong / ketutup nav lain.
+           Sekarang dikasih tinggi maksimum sendiri + overflow-y:auto,
+           jadi discroll TERPISAH dari card list di atasnya, dan seluruh
+           kontennya pasti bisa dijangkau. */
         .resume-detail-panel{
             position:relative;
             top:auto;
             right:auto;
             width:100%;
             min-height:auto;
-            max-height:58vh;
-            overflow-y:auto;
-            overflow-x:hidden;
-            -webkit-overflow-scrolling:touch;
+            max-height: 56vh;
             padding:14px;
             margin-top:6px;
             box-shadow:none;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
 
         .resume-detail-top{
@@ -592,6 +736,9 @@ export default function ResumePage({ src }) {
             grid-template-columns:38px 1fr auto;
             gap:8px;
             padding:0 10px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
 
         .resume-detail-top-index{
@@ -641,6 +788,22 @@ export default function ResumePage({ src }) {
 
       <div className="resume-overlay">
         <div className="resume-stack">
+          <div className={`resume-id-card${mounted ? " mounted" : ""}`}>
+            <div className="resume-id-photo">
+              <img src={profilePic} alt="Achmad Fikri Hidayatullah" />
+            </div>
+            <div className="resume-id-body">
+              <div className="resume-id-num">ID · SEES-07</div>
+              <div className="resume-id-kicker">MEMBER PROFILE</div>
+              <div className="resume-id-name">ACHMAD FIKRI HIDAYATULLAH</div>
+              <div className="resume-id-role">BACKEND DEVELOPER</div>
+              <div className="resume-id-tags">
+                <span className="resume-id-tag">SUMENEP, ID</span>
+                <span className="resume-id-tag">UNIV. BRAWIJAYA</span>
+              </div>
+            </div>
+          </div>
+
           <div className={`resume-list-tag${mounted ? " mounted" : ""}`}>LIST</div>
           {ITEMS.map((item, index) => (
             <div
